@@ -1,0 +1,425 @@
+/* Window Management Styles */
+
+.windows-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.window {
+    position: absolute;
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    pointer-events: all;
+    transition: all var(--transition-fast);
+    min-width: 300px;
+    min-height: 200px;
+    backdrop-filter: blur(20px);
+}
+
+.window.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100vh - 60px) !important;
+    border-radius: 0;
+    transition: all var(--transition-medium);
+}
+
+.window.minimized {
+    opacity: 0;
+    transform: scale(0.8) translateY(50px);
+    pointer-events: none;
+    transition: all var(--transition-medium);
+}
+
+.window.focused {
+    z-index: 1000;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.window.dragging {
+    transition: none;
+    user-select: none;
+    cursor: grabbing;
+}
+
+.window.resizing {
+    transition: none;
+    user-select: none;
+}
+
+/* Window Header */
+.window-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    cursor: grab;
+    user-select: none;
+}
+
+.window-header:active {
+    cursor: grabbing;
+}
+
+.window-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.window-title i {
+    font-size: 16px;
+    color: var(--primary-color);
+}
+
+.window-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.window-control {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all var(--transition-fast);
+    color: white;
+}
+
+.window-control:hover {
+    transform: scale(1.1);
+}
+
+.window-control.minimize {
+    background: #fbbf24;
+}
+
+.window-control.minimize:hover {
+    background: #f59e0b;
+}
+
+.window-control.maximize {
+    background: #10b981;
+}
+
+.window-control.maximize:hover {
+    background: #059669;
+}
+
+.window-control.close {
+    background: #ef4444;
+}
+
+.window-control.close:hover {
+    background: #dc2626;
+}
+
+/* Window Content */
+.window-content {
+    height: calc(100% - 60px);
+    overflow: auto;
+    background: var(--surface-color);
+}
+
+.window-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.window-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 3px;
+    opacity: 0.3;
+}
+
+.window-content::-webkit-scrollbar-thumb:hover {
+    opacity: 0.6;
+}
+
+/* Window Resize Handles */
+.resize-handle {
+    position: absolute;
+    z-index: 10;
+}
+
+.resize-handle.n {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    cursor: n-resize;
+}
+
+.resize-handle.s {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    cursor: s-resize;
+}
+
+.resize-handle.e {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: e-resize;
+}
+
+.resize-handle.w {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: w-resize;
+}
+
+.resize-handle.ne {
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    cursor: ne-resize;
+}
+
+.resize-handle.nw {
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    cursor: nw-resize;
+}
+
+.resize-handle.se {
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    cursor: se-resize;
+}
+
+.resize-handle.sw {
+    bottom: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    cursor: sw-resize;
+}
+
+/* Window Animations */
+.window.opening {
+    animation: windowOpen var(--transition-medium) ease-out;
+}
+
+.window.closing {
+    animation: windowClose var(--transition-medium) ease-in;
+}
+
+@keyframes windowOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes windowClose {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+}
+
+/* Window Snap Indicators */
+.snap-indicator {
+    position: fixed;
+    background: rgba(37, 99, 235, 0.3);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: all var(--transition-fast);
+    pointer-events: none;
+    z-index: 999;
+}
+
+.snap-indicator.show {
+    opacity: 1;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-medium);
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    z-index: 1501;
+}
+
+/* Responsive Window Behavior */
+@media (max-width: 768px) {
+    .window {
+        min-width: 280px;
+        border-radius: var(--radius-md);
+    }
+    
+    .window-header {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .window-title {
+        font-size: 13px;
+    }
+    
+    .window-control {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+    
+    .resize-handle.ne,
+    .resize-handle.nw,
+    .resize-handle.se,
+    .resize-handle.sw {
+        width: 15px;
+        height: 15px;
+    }
+    
+    /* Auto-maximize on mobile */
+    .window {
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: calc(100vh - 50px) !important;
+        border-radius: 0;
+    }
+    
+    .window-content {
+        height: calc(100% - 50px);
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .window {
+        background: var(--dark-surface);
+        border-color: var(--dark-border);
+    }
+    
+    .window-header {
+        background: rgba(30, 41, 59, 0.8);
+        border-bottom-color: var(--dark-border);
+    }
+    
+    .window-content {
+        background: var(--dark-surface);
+    }
+    
+    .modal {
+        background: var(--dark-surface);
+        border-color: var(--dark-border);
+    }
+}
+
+/* Performance Optimizations */
+.window {
+    contain: layout style paint;
+    will-change: auto;
+}
+
+.window.dragging,
+.window.resizing {
+    will-change: transform, width, height;
+}
+
+/* Accessibility */
+.window:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: -2px;
+}
+
+.window-control:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .window {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        border-radius: 0 !important;
+        margin-bottom: 1rem;
+        break-inside: avoid;
+    }
+    
+    .window-header {
+        background: #f5f5f5 !important;
+        border-bottom: 1px solid #ccc !important;
+    }
+    
+    .window-controls,
+    .resize-handle {
+        display: none !important;
+    }
+}

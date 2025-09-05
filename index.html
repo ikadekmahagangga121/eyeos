@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernOS - Web Desktop Environment</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/desktop.css">
+    <link rel="stylesheet" href="styles/window.css">
+    <link rel="stylesheet" href="styles/applications.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Desktop Environment -->
+    <div id="desktop" class="desktop">
+        <!-- Desktop Background -->
+        <div class="desktop-background"></div>
+        
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" data-app="file-manager">
+                <div class="icon-image">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <div class="icon-label">File Manager</div>
+            </div>
+            
+            <div class="desktop-icon" data-app="text-editor">
+                <div class="icon-image">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="icon-label">Text Editor</div>
+            </div>
+            
+            <div class="desktop-icon" data-app="calculator">
+                <div class="icon-image">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="icon-label">Calculator</div>
+            </div>
+            
+            <div class="desktop-icon" data-app="settings">
+                <div class="icon-image">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="icon-label">Settings</div>
+            </div>
+            
+            <div class="desktop-icon" data-app="web-browser">
+                <div class="icon-image">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="icon-label">Web Browser</div>
+            </div>
+            
+            <div class="desktop-icon" data-app="terminal">
+                <div class="icon-image">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div class="icon-label">Terminal</div>
+            </div>
+        </div>
+        
+        <!-- Windows Container -->
+        <div id="windows-container" class="windows-container"></div>
+        
+        <!-- Taskbar -->
+        <div class="taskbar">
+            <div class="taskbar-left">
+                <div class="start-button" id="start-button">
+                    <i class="fas fa-th"></i>
+                    <span>ModernOS</span>
+                </div>
+                <div class="taskbar-apps" id="taskbar-apps"></div>
+            </div>
+            
+            <div class="taskbar-center">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search applications, files..." id="search-input">
+                </div>
+            </div>
+            
+            <div class="taskbar-right">
+                <div class="system-tray">
+                    <div class="tray-item" id="network-status">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <div class="tray-item" id="volume-control">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <div class="tray-item" id="clock">
+                        <span id="time">12:00</span>
+                        <span id="date">Jan 1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Start Menu -->
+        <div class="start-menu" id="start-menu">
+            <div class="start-menu-header">
+                <h3>Applications</h3>
+            </div>
+            <div class="start-menu-apps">
+                <div class="start-app" data-app="file-manager">
+                    <i class="fas fa-folder"></i>
+                    <span>File Manager</span>
+                </div>
+                <div class="start-app" data-app="text-editor">
+                    <i class="fas fa-edit"></i>
+                    <span>Text Editor</span>
+                </div>
+                <div class="start-app" data-app="calculator">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculator</span>
+                </div>
+                <div class="start-app" data-app="web-browser">
+                    <i class="fas fa-globe"></i>
+                    <span>Web Browser</span>
+                </div>
+                <div class="start-app" data-app="terminal">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal</span>
+                </div>
+                <div class="start-app" data-app="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+            <div class="start-menu-footer">
+                <div class="power-options">
+                    <button class="power-btn" data-action="restart">
+                        <i class="fas fa-redo"></i>
+                        Restart
+                    </button>
+                    <button class="power-btn" data-action="shutdown">
+                        <i class="fas fa-power-off"></i>
+                        Shutdown
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Context Menu -->
+        <div class="context-menu" id="context-menu">
+            <div class="context-item" data-action="refresh">
+                <i class="fas fa-sync"></i>
+                Refresh
+            </div>
+            <div class="context-item" data-action="paste">
+                <i class="fas fa-paste"></i>
+                Paste
+            </div>
+            <div class="context-item" data-action="personalize">
+                <i class="fas fa-palette"></i>
+                Personalize
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fas fa-desktop"></i>
+                <h1>ModernOS</h1>
+            </div>
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+            <p>Starting your modern web desktop...</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/core/system.js"></script>
+    <script src="js/core/window-manager.js"></script>
+    <script src="js/core/desktop.js"></script>
+    <script src="js/applications/file-manager.js"></script>
+    <script src="js/applications/text-editor.js"></script>
+    <script src="js/applications/calculator.js"></script>
+    <script src="js/applications/settings.js"></script>
+    <script src="js/applications/web-browser.js"></script>
+    <script src="js/applications/terminal.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
