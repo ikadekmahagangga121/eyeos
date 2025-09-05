@@ -1,4 +1,4 @@
-// ModernOS - Web Desktop Environment JavaScript
+// ModernOS - Advanced Web Desktop Environment JavaScript
 
 class ModernOS {
     constructor() {
@@ -7,15 +7,30 @@ class ModernOS {
         this.activeWindow = null;
         this.startMenuVisible = false;
         this.contextMenuVisible = false;
+        this.notifications = [];
+        this.notificationCounter = 0;
+        this.isLoggedIn = false;
+        this.currentUser = null;
+        this.snapZones = [];
+        this.draggedWindow = null;
+        this.fileSystem = this.initializeFileSystem();
+        this.notes = this.initializeNotes();
+        this.calendarEvents = this.initializeCalendar();
+        this.systemStats = this.initializeSystemStats();
         
         this.init();
     }
 
     init() {
+        this.showLoginModal();
         this.setupEventListeners();
         this.updateClock();
         this.setupDesktopIcons();
         this.setupContextMenu();
+        this.setupNotificationSystem();
+        this.setupSystemTray();
+        this.setupSnapZones();
+        this.startSystemMonitoring();
     }
 
     setupEventListeners() {
@@ -250,6 +265,20 @@ class ModernOS {
                 return this.getTextEditorContent();
             case 'calculator':
                 return this.getCalculatorContent();
+            case 'browser':
+                return this.getBrowserContent();
+            case 'image-viewer':
+                return this.getImageViewerContent();
+            case 'media-player':
+                return this.getMediaPlayerContent();
+            case 'terminal':
+                return this.getTerminalContent();
+            case 'task-manager':
+                return this.getTaskManagerContent();
+            case 'calendar':
+                return this.getCalendarContent();
+            case 'notes':
+                return this.getNotesContent();
             case 'settings':
                 return this.getSettingsContent();
             default:
@@ -728,6 +757,343 @@ Enjoy using ModernOS!</textarea>
                 </div>
             `;
         }
+    }
+
+    // New Application Content Methods
+    getBrowserContent() {
+        return `
+            <div class="browser">
+                <div class="browser-toolbar">
+                    <div class="browser-nav-buttons">
+                        <button class="browser-nav-btn" disabled>
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <button class="browser-nav-btn" disabled>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="browser-nav-btn">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="browser-address-bar">
+                        <i class="fas fa-lock" style="color: #28a745; margin-right: 8px;"></i>
+                        <input type="text" value="https://www.google.com" placeholder="Search or enter address">
+                    </div>
+                    <div class="browser-actions">
+                        <button class="browser-action-btn">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        <button class="browser-action-btn">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="browser-action-btn">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="browser-tabs">
+                    <div class="browser-tab active">
+                        <i class="fas fa-globe"></i>
+                        <span>Google</span>
+                        <button class="browser-tab-close">×</button>
+                    </div>
+                    <button class="browser-tab" style="min-width: 40px; justify-content: center;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="browser-content">
+                    <iframe class="browser-iframe" src="https://www.google.com" sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+                </div>
+            </div>
+        `;
+    }
+
+    getImageViewerContent() {
+        return `
+            <div class="image-viewer">
+                <div class="image-toolbar">
+                    <button class="image-nav-btn" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <button class="image-nav-btn" disabled>
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="image-info">
+                        <span>photo1.jpg - 2.5 MB</span>
+                    </div>
+                    <div class="image-actions">
+                        <button class="image-action-btn">
+                            <i class="fas fa-rotate-left"></i>
+                        </button>
+                        <button class="image-action-btn">
+                            <i class="fas fa-rotate-right"></i>
+                        </button>
+                        <button class="image-action-btn">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="image-action-btn">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="image-content">
+                    <img src="https://picsum.photos/800/600?random=1" alt="Sample Image" class="image-display">
+                    <div class="image-thumbnails">
+                        <img src="https://picsum.photos/100/100?random=1" alt="Thumb 1" class="image-thumbnail active">
+                        <img src="https://picsum.photos/100/100?random=2" alt="Thumb 2" class="image-thumbnail">
+                        <img src="https://picsum.photos/100/100?random=3" alt="Thumb 3" class="image-thumbnail">
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    getMediaPlayerContent() {
+        return `
+            <div class="media-player">
+                <div class="media-toolbar">
+                    <div class="media-controls">
+                        <button class="media-btn">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="media-btn play-pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="media-btn">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <div class="media-progress">
+                            <div class="media-progress-bar" style="width: 30%"></div>
+                        </div>
+                        <div class="media-time">1:23 / 4:56</div>
+                    </div>
+                    <div class="media-volume">
+                        <i class="fas fa-volume-up"></i>
+                        <div class="media-volume-slider">
+                            <div class="media-volume-bar"></div>
+                        </div>
+                    </div>
+                    <button class="media-btn" onclick="modernOS.togglePlaylist()">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                <div class="media-content">
+                    <video class="media-video" controls>
+                        <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="media-playlist" id="media-playlist">
+                        <div class="playlist-header">Playlist</div>
+                        <div class="playlist-item active">
+                            <div class="playlist-item-thumb">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="playlist-item-info">
+                                <div class="playlist-item-title">Sample Video 1</div>
+                                <div class="playlist-item-duration">4:56</div>
+                            </div>
+                        </div>
+                        <div class="playlist-item">
+                            <div class="playlist-item-thumb">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="playlist-item-info">
+                                <div class="playlist-item-title">Sample Video 2</div>
+                                <div class="playlist-item-duration">3:42</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    getTerminalContent() {
+        return `
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-title">Terminal</div>
+                    <div class="terminal-controls">
+                        <button class="terminal-control-btn minimize"></button>
+                        <button class="terminal-control-btn maximize"></button>
+                        <button class="terminal-control-btn close"></button>
+                    </div>
+                </div>
+                <div class="terminal-content" id="terminal-content">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">admin@modernos:~$ </span>
+                        <span>Welcome to ModernOS Terminal</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">admin@modernos:~$ </span>
+                        <span>Type 'help' for available commands</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">admin@modernos:~$ </span>
+                        <input type="text" class="terminal-input" id="terminal-input" autofocus>
+                        <span class="terminal-cursor"></span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    getTaskManagerContent() {
+        return `
+            <div class="task-manager">
+                <div class="task-toolbar">
+                    <button class="task-refresh-btn" onclick="modernOS.refreshTasks()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="task-tabs">
+                    <div class="task-tab active">Processes</div>
+                    <div class="task-tab">Performance</div>
+                    <div class="task-tab">Services</div>
+                </div>
+                <div class="task-content">
+                    <div class="task-list" id="task-list">
+                        ${this.systemStats.processes.map(process => `
+                            <div class="task-item">
+                                <div class="task-icon" style="background: #667eea;">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="task-info">
+                                    <div class="task-name">${process.name}</div>
+                                    <div class="task-details">CPU: ${process.cpu}% | Memory: ${process.memory}MB | Status: ${process.status}</div>
+                                </div>
+                                <div class="task-actions">
+                                    <button class="task-action-btn">Details</button>
+                                    <button class="task-action-btn end">End Task</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    getCalendarContent() {
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+        
+        return `
+            <div class="calendar">
+                <div class="calendar-toolbar">
+                    <div class="calendar-nav">
+                        <button class="calendar-nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="calendar-month-year">${monthNames[currentMonth]} ${currentYear}</div>
+                        <button class="calendar-nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-view-toggle">
+                        <button class="calendar-view-btn active">Month</button>
+                        <button class="calendar-view-btn">Week</button>
+                        <button class="calendar-view-btn">Day</button>
+                    </div>
+                </div>
+                <div class="calendar-content">
+                    <div class="calendar-grid">
+                        <div class="calendar-header">Sun</div>
+                        <div class="calendar-header">Mon</div>
+                        <div class="calendar-header">Tue</div>
+                        <div class="calendar-header">Wed</div>
+                        <div class="calendar-header">Thu</div>
+                        <div class="calendar-header">Fri</div>
+                        <div class="calendar-header">Sat</div>
+                        ${this.generateCalendarDays(currentYear, currentMonth)}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    getNotesContent() {
+        return `
+            <div class="notes">
+                <div class="notes-sidebar">
+                    <div class="notes-header">
+                        <input type="text" class="notes-search" placeholder="Search notes..." id="notes-search">
+                    </div>
+                    <div class="notes-list" id="notes-list">
+                        ${this.notes.map(note => `
+                            <div class="notes-item" data-note-id="${note.id}">
+                                <div class="notes-item-title">${note.title}</div>
+                                <div class="notes-item-preview">${note.content.substring(0, 50)}...</div>
+                                <div class="notes-item-date">${note.modified}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="notes-content">
+                    <div class="notes-toolbar">
+                        <button class="notes-toolbar-btn">
+                            <i class="fas fa-plus"></i> New Note
+                        </button>
+                        <button class="notes-toolbar-btn">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button class="notes-toolbar-btn">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    <div class="notes-editor">
+                        <input type="text" class="notes-title" placeholder="Note title..." id="note-title">
+                        <textarea class="notes-text" placeholder="Start writing your note..." id="note-content"></textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Helper methods for new applications
+    generateCalendarDays(year, month) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDay = firstDay.getDay();
+        
+        let html = '';
+        
+        // Empty cells for days before the first day of the month
+        for (let i = 0; i < startingDay; i++) {
+            html += '<div class="calendar-day other-month"></div>';
+        }
+        
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
+            const hasEvent = this.calendarEvents.events.some(event => 
+                event.date.getDate() === day && 
+                event.date.getMonth() === month && 
+                event.date.getFullYear() === year
+            );
+            
+            html += `
+                <div class="calendar-day ${isToday ? 'today' : ''}">
+                    <div class="calendar-day-number">${day}</div>
+                    ${hasEvent ? '<div class="calendar-event">Event</div>' : ''}
+                </div>
+            `;
+        }
+        
+        return html;
+    }
+
+    togglePlaylist() {
+        const playlist = document.getElementById('media-playlist');
+        playlist.classList.toggle('show');
+    }
+
+    refreshTasks() {
+        this.showNotification('info', 'Task Manager', 'Process list refreshed');
     }
 }
 

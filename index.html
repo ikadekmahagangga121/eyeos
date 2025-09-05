@@ -25,6 +25,34 @@
                 <i class="fas fa-calculator"></i>
                 <span>Calculator</span>
             </div>
+            <div class="desktop-icon" data-app="browser">
+                <i class="fas fa-globe"></i>
+                <span>Browser</span>
+            </div>
+            <div class="desktop-icon" data-app="image-viewer">
+                <i class="fas fa-image"></i>
+                <span>Images</span>
+            </div>
+            <div class="desktop-icon" data-app="media-player">
+                <i class="fas fa-play-circle"></i>
+                <span>Media</span>
+            </div>
+            <div class="desktop-icon" data-app="terminal">
+                <i class="fas fa-terminal"></i>
+                <span>Terminal</span>
+            </div>
+            <div class="desktop-icon" data-app="task-manager">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </div>
+            <div class="desktop-icon" data-app="calendar">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </div>
+            <div class="desktop-icon" data-app="notes">
+                <i class="fas fa-sticky-note"></i>
+                <span>Notes</span>
+            </div>
             <div class="desktop-icon" data-app="settings">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
@@ -48,11 +76,18 @@
         </div>
         <div class="taskbar-right">
             <div class="system-tray">
-                <div class="tray-item">
+                <div class="tray-item" id="wifi-status">
                     <i class="fas fa-wifi"></i>
                 </div>
-                <div class="tray-item">
+                <div class="tray-item" id="volume-control">
                     <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="tray-item" id="battery-status">
+                    <i class="fas fa-battery-full"></i>
+                </div>
+                <div class="tray-item" id="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notification-count">0</span>
                 </div>
                 <div class="tray-item">
                     <span id="clock">12:00 PM</span>
@@ -76,6 +111,34 @@
                 <div class="start-menu-item" data-app="calculator">
                     <i class="fas fa-calculator"></i>
                     <span>Calculator</span>
+                </div>
+                <div class="start-menu-item" data-app="browser">
+                    <i class="fas fa-globe"></i>
+                    <span>Web Browser</span>
+                </div>
+                <div class="start-menu-item" data-app="image-viewer">
+                    <i class="fas fa-image"></i>
+                    <span>Image Viewer</span>
+                </div>
+                <div class="start-menu-item" data-app="media-player">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Media Player</span>
+                </div>
+                <div class="start-menu-item" data-app="terminal">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal</span>
+                </div>
+                <div class="start-menu-item" data-app="task-manager">
+                    <i class="fas fa-tasks"></i>
+                    <span>Task Manager</span>
+                </div>
+                <div class="start-menu-item" data-app="calendar">
+                    <i class="fas fa-calendar"></i>
+                    <span>Calendar</span>
+                </div>
+                <div class="start-menu-item" data-app="notes">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
                 </div>
                 <div class="start-menu-item" data-app="settings">
                     <i class="fas fa-cog"></i>
@@ -101,12 +164,68 @@
             <i class="fas fa-file-plus"></i>
             <span>New File</span>
         </div>
+        <div class="context-menu-item" data-action="new-note">
+            <i class="fas fa-sticky-note"></i>
+            <span>New Note</span>
+        </div>
         <div class="context-menu-item" data-action="refresh">
             <i class="fas fa-sync-alt"></i>
             <span>Refresh</span>
         </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" data-action="view">
+            <i class="fas fa-th"></i>
+            <span>View Options</span>
+        </div>
+        <div class="context-menu-item" data-action="sort">
+            <i class="fas fa-sort"></i>
+            <span>Sort By</span>
+        </div>
     </div>
 
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="clear-all-btn" onclick="modernOS.clearAllNotifications()">Clear All</button>
+        </div>
+        <div class="notification-list" id="notification-list">
+            <!-- Notifications will be added here dynamically -->
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="login-modal">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Welcome to ModernOS</h2>
+                <p>Please sign in to continue</p>
+            </div>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" value="admin">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" value="admin">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-me">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                </div>
+                <button class="login-btn" onclick="modernOS.login()">Sign In</button>
+            </div>
+            <div class="login-footer">
+                <p>Default credentials: admin / admin</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="apps.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
