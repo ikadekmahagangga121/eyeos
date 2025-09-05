@@ -1,0 +1,34 @@
+{
+  "name": "modernos",
+  "version": "1.0.0",
+  "description": "A modern web-based desktop environment inspired by EyeOS but with better design and easier functionality",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "desktop",
+    "web",
+    "os",
+    "eyeos",
+    "modern",
+    "ui",
+    "javascript",
+    "css",
+    "html"
+  ],
+  "author": "ModernOS Team",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/modernos/modernos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/modernos/modernos/issues"
+  },
+  "homepage": "https://github.com/modernos/modernos#readme"
+}

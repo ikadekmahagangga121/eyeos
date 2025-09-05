@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernOS - Web Desktop Environment</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Desktop Background -->
+    <div class="desktop" id="desktop">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" data-app="file-manager">
+                <i class="fas fa-folder"></i>
+                <span>Files</span>
+            </div>
+            <div class="desktop-icon" data-app="text-editor">
+                <i class="fas fa-file-alt"></i>
+                <span>Text Editor</span>
+            </div>
+            <div class="desktop-icon" data-app="calculator">
+                <i class="fas fa-calculator"></i>
+                <span>Calculator</span>
+            </div>
+            <div class="desktop-icon" data-app="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Windows Container -->
+        <div class="windows-container" id="windows-container"></div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="taskbar-left">
+            <button class="start-button" id="start-button">
+                <i class="fas fa-bars"></i>
+                <span>Start</span>
+            </button>
+        </div>
+        <div class="taskbar-center">
+            <div class="taskbar-apps" id="taskbar-apps"></div>
+        </div>
+        <div class="taskbar-right">
+            <div class="system-tray">
+                <div class="tray-item">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div class="tray-item">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="tray-item">
+                    <span id="clock">12:00 PM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="start-menu">
+        <div class="start-menu-content">
+            <div class="start-menu-apps">
+                <div class="start-menu-item" data-app="file-manager">
+                    <i class="fas fa-folder"></i>
+                    <span>File Manager</span>
+                </div>
+                <div class="start-menu-item" data-app="text-editor">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Text Editor</span>
+                </div>
+                <div class="start-menu-item" data-app="calculator">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculator</span>
+                </div>
+                <div class="start-menu-item" data-app="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+            <div class="start-menu-footer">
+                <button class="power-button">
+                    <i class="fas fa-power-off"></i>
+                    <span>Shutdown</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item" data-action="new-folder">
+            <i class="fas fa-folder-plus"></i>
+            <span>New Folder</span>
+        </div>
+        <div class="context-menu-item" data-action="new-file">
+            <i class="fas fa-file-plus"></i>
+            <span>New File</span>
+        </div>
+        <div class="context-menu-item" data-action="refresh">
+            <i class="fas fa-sync-alt"></i>
+            <span>Refresh</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
