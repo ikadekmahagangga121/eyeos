@@ -102,6 +102,39 @@ class Settings {
                                             <div class="wallpaper-preview" style="background: linear-gradient(135deg, #a8e6cf 0%, #dcedc8 100%);"></div>
                                             <span>Green Gradient</span>
                                         </div>
+                                        <div class="wallpaper-option" data-wallpaper="gradient-pink">
+                                            <div class="wallpaper-preview" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);"></div>
+                                            <span>Pink Gradient</span>
+                                        </div>
+                                        <div class="wallpaper-option" data-wallpaper="gradient-sunset">
+                                            <div class="wallpaper-preview" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                                            <span>Sunset Gradient</span>
+                                        </div>
+                                        <div class="wallpaper-option" data-wallpaper="gradient-ocean">
+                                            <div class="wallpaper-preview" style="background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);"></div>
+                                            <span>Ocean Gradient</span>
+                                        </div>
+                                        <div class="wallpaper-option" data-wallpaper="gradient-forest">
+                                            <div class="wallpaper-preview" style="background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);"></div>
+                                            <span>Forest Gradient</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <h4>Custom Wallpaper</h4>
+                                    <p>Upload your own background image</p>
+                                </div>
+                                <div class="settings-control">
+                                    <div class="wallpaper-upload">
+                                        <input type="file" id="wallpaper-upload" accept="image/*" style="display: none;">
+                                        <button class="btn btn-secondary" id="upload-wallpaper-btn">
+                                            <i class="fas fa-upload"></i>
+                                            Upload Image
+                                        </button>
+                                        <div class="custom-wallpapers" id="custom-wallpapers"></div>
                                     </div>
                                 </div>
                             </div>
@@ -371,6 +404,18 @@ class Settings {
             });
         });
         
+        // Wallpaper upload
+        const uploadBtn = windowElement.querySelector('#upload-wallpaper-btn');
+        const uploadInput = windowElement.querySelector('#wallpaper-upload');
+        
+        uploadBtn.addEventListener('click', () => {
+            uploadInput.click();
+        });
+        
+        uploadInput.addEventListener('change', (e) => {
+            this.handleWallpaperUpload(e.target.files[0]);
+        });
+        
         // Wallpaper
         const wallpaperOptions = windowElement.querySelectorAll('.wallpaper-option');
         wallpaperOptions.forEach(option => {
@@ -471,6 +516,16 @@ class Settings {
             this.updateWallpaperSelection(wallpaperOption);
         }
         
+        // Load accent color
+        const currentColor = ModernOS.settings.accentColor || '#2563eb';
+        const colorOption = windowElement.querySelector(`[data-color="${currentColor}"]`);
+        if (colorOption) {
+            this.updateColorSelection(colorOption);
+        }
+        
+        // Load custom wallpapers
+        this.loadCustomWallpapers();
+        
         // Load toggles
         this.updateToggle('animations', ModernOS.settings.animations !== false);
         this.updateToggle('transparency', ModernOS.settings.transparency !== false);
@@ -493,8 +548,108 @@ class Settings {
     }
     
     setAccentColor(color) {
-        document.documentElement.style.setProperty('--primary-color', color);
         ModernOS.updateSetting('accentColor', color);
+        ModernOS.applyAccentColor(color);
+    }
+    
+    async handleWallpaperUpload(file) {
+        if (!file) return;
+        
+        try {
+            const wallpaperId = await ModernOS.uploadWallpaper(file);
+            ModernOS.updateSetting('wallpaper', wallpaperId);
+            ModernOS.applyWallpaper(wallpaperId);
+            
+            // Refresh custom wallpapers display
+            this.loadCustomWallpapers();
+            
+            // Update selection
+            this.clearWallpaperSelection();
+            
+            ModernOS.showNotification('Settings', 'Wallpaper uploaded successfully!');
+        } catch (error) {
+            ModernOS.showNotification('Settings', `Failed to upload wallpaper: ${error.message}`);
+        }
+    }
+    
+    loadCustomWallpapers() {
+        const windowElement = document.getElementById(this.windowId);
+        const customWallpapersContainer = windowElement.querySelector('#custom-wallpapers');
+        
+        if (!customWallpapersContainer) return;
+        
+        const customWallpapers = ModernOS.getCustomWallpapers();
+        
+        if (Object.keys(customWallpapers).length === 0) {
+            customWallpapersContainer.innerHTML = '';
+            return;
+        }
+        
+        customWallpapersContainer.innerHTML = '<h5>Your Custom Wallpapers</h5>';
+        
+        const wallpaperGrid = document.createElement('div');
+        wallpaperGrid.className = 'custom-wallpaper-grid';
+        
+        Object.values(customWallpapers).forEach(wallpaper => {
+            const wallpaperItem = document.createElement('div');
+            wallpaperItem.className = 'custom-wallpaper-item';
+            if (ModernOS.settings.wallpaper === wallpaper.id) {
+                wallpaperItem.classList.add('selected');
+            }
+            
+            wallpaperItem.innerHTML = `
+                <div class="custom-wallpaper-preview" style="background-image: url(${wallpaper.dataUrl});"></div>
+                <div class="custom-wallpaper-actions">
+                    <button class="btn btn-sm apply-wallpaper" data-wallpaper="${wallpaper.id}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm delete-wallpaper" data-wallpaper="${wallpaper.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            wallpaperGrid.appendChild(wallpaperItem);
+        });
+        
+        customWallpapersContainer.appendChild(wallpaperGrid);
+        
+        // Setup event listeners for custom wallpapers
+        wallpaperGrid.querySelectorAll('.apply-wallpaper').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const wallpaperId = btn.dataset.wallpaper;
+                ModernOS.updateSetting('wallpaper', wallpaperId);
+                ModernOS.applyWallpaper(wallpaperId);
+                this.clearWallpaperSelection();
+                this.loadCustomWallpapers(); // Refresh to update selection
+            });
+        });
+        
+        wallpaperGrid.querySelectorAll('.delete-wallpaper').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const wallpaperId = btn.dataset.wallpaper;
+                if (confirm('Are you sure you want to delete this wallpaper?')) {
+                    ModernOS.deleteCustomWallpaper(wallpaperId);
+                    
+                    // If this was the current wallpaper, switch to default
+                    if (ModernOS.settings.wallpaper === wallpaperId) {
+                        ModernOS.updateSetting('wallpaper', 'gradient-blue');
+                        ModernOS.applyWallpaper('gradient-blue');
+                        this.updateWallpaperSelection(document.querySelector('[data-wallpaper="gradient-blue"]'));
+                    }
+                    
+                    this.loadCustomWallpapers(); // Refresh display
+                }
+            });
+        });
+    }
+    
+    clearWallpaperSelection() {
+        const windowElement = document.getElementById(this.windowId);
+        const wallpaperOptions = windowElement.querySelectorAll('.wallpaper-option');
+        wallpaperOptions.forEach(option => {
+            option.classList.remove('selected');
+        });
     }
     
     updateColorSelection(selectedOption) {

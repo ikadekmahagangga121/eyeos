@@ -9,11 +9,18 @@ ModernOS adalah sistem operasi berbasis web yang modern dan canggih, memberikan 
 
 ## ✨ Fitur Utama
 
+### 🔐 Sistem Authentication
+- **Login & Register**: Sistem autentikasi lengkap dengan validasi
+- **User Management**: Multi-user support dengan profile dan preferences
+- **Session Management**: Persistent login dengan remember me option
+- **Demo Accounts**: 3 akun demo siap pakai (admin, user, guest)
+
 ### 🖥️ Desktop Environment Lengkap
 - **Window Management**: Sistem manajemen jendela dengan drag, resize, minimize, maximize, dan snap
 - **Taskbar**: Taskbar modern dengan start menu, aplikasi aktif, dan system tray
 - **Desktop Icons**: Ikon desktop yang dapat diklik untuk meluncurkan aplikasi
 - **Context Menu**: Menu konteks dengan opsi refresh, paste, dan personalisasi
+- **User Profile**: Info user di start menu dengan logout dan profile options
 
 ### 📱 Aplikasi Terintegrasi
 
@@ -63,9 +70,11 @@ ModernOS adalah sistem operasi berbasis web yang modern dan canggih, memberikan 
 
 #### Tema dan Wallpaper
 - **Light/Dark Mode**: Otomatis mengikuti sistem atau manual
-- **Multiple Wallpapers**: Gradient backgrounds yang indah
+- **Multiple Wallpapers**: 8 gradient backgrounds yang indah
+- **Custom Wallpapers**: Upload dan kelola wallpaper sendiri (max 5MB)
 - **Accent Colors**: 6 pilihan warna accent yang berbeda
 - **Transparency Effects**: Blur dan transparency effects
+- **Per-User Settings**: Setiap user punya preferences sendiri
 
 #### Responsive Design
 - **Mobile Friendly**: Layout yang menyesuaikan untuk mobile dan tablet
@@ -120,8 +129,17 @@ modernos/
 
 ### Instalasi
 1. Clone atau download repository ini
-2. Buka `index.html` di browser modern
-3. Tidak diperlukan server atau dependencies tambahan
+2. Buka `start.html` di browser modern untuk halaman welcome
+3. Atau langsung buka `auth.html` untuk halaman login
+4. Tidak diperlukan server atau dependencies tambahan
+
+### Login
+**Demo Accounts tersedia:**
+- **Administrator**: `admin` / `admin123`
+- **Regular User**: `user` / `user123`  
+- **Guest User**: `guest` / `guest123`
+
+Atau buat akun baru melalui form register.
 
 ### Navigasi Dasar
 - **Desktop Icons**: Double-click untuk membuka aplikasi
@@ -147,8 +165,10 @@ modernos/
 1. Buka Settings dari start menu atau desktop icon
 2. Pilih tab "Appearance"
 3. Pilih theme (Light/Dark/Auto)
-4. Pilih accent color
-5. Pilih wallpaper
+4. Pilih accent color (6 pilihan warna)
+5. Pilih wallpaper dari 8 gradient preset
+6. Upload wallpaper custom (max 5MB)
+7. Kelola wallpaper custom (apply/delete)
 
 ### Menambah Aplikasi Baru
 Untuk menambah aplikasi baru:

@@ -74,6 +74,16 @@ class Desktop {
             });
         });
         
+        // User actions
+        const userBtns = document.querySelectorAll('.user-btn');
+        userBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                this.handleUserAction(action);
+                this.closeStartMenu();
+            });
+        });
+
         // Power options
         powerBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -327,6 +337,19 @@ class Desktop {
         }
     }
     
+    handleUserAction(action) {
+        switch (action) {
+            case 'profile':
+                this.launchApplication('settings');
+                break;
+            case 'logout':
+                if (confirm('Are you sure you want to logout?')) {
+                    ModernOS.logout();
+                }
+                break;
+        }
+    }
+
     handlePowerAction(action) {
         switch (action) {
             case 'restart':

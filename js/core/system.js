@@ -8,26 +8,74 @@ class ModernOS {
         this.version = '1.0.0';
         this.name = 'ModernOS';
         this.isInitialized = false;
+        this.currentUser = null;
         this.settings = this.loadSettings();
         this.clipboard = '';
         
         // System state
         this.state = {
             theme: this.settings.theme || 'light',
-            wallpaper: this.settings.wallpaper || 'default',
+            wallpaper: this.settings.wallpaper || 'gradient-blue',
             animations: this.settings.animations !== false,
-            sounds: this.settings.sounds !== false
+            sounds: this.settings.sounds !== false,
+            accentColor: this.settings.accentColor || '#2563eb'
         };
         
         // Event system
         this.events = new EventTarget();
         
+        // Check authentication before initializing
+        this.checkAuthentication();
+    }
+    
+    checkAuthentication() {
+        // Check if user is authenticated
+        const session = this.getCurrentSession();
+        
+        if (!session) {
+            // No valid session, redirect to auth page
+            window.location.href = 'auth.html';
+            return;
+        }
+        
+        // Set current user and load their preferences
+        this.currentUser = session;
+        this.loadUserPreferences();
+        
         // Initialize system
         this.init();
     }
     
+    getCurrentSession() {
+        try {
+            const session = JSON.parse(localStorage.getItem('modernos-session')) ||
+                           JSON.parse(sessionStorage.getItem('modernos-session-temp'));
+            
+            if (session && new Date(session.expiresAt) > new Date()) {
+                return session;
+            }
+        } catch (error) {
+            console.error('Failed to get current session:', error);
+        }
+        
+        return null;
+    }
+    
+    loadUserPreferences() {
+        if (this.currentUser && this.currentUser.preferences) {
+            this.settings = { ...this.settings, ...this.currentUser.preferences };
+            this.state = {
+                theme: this.settings.theme || 'light',
+                wallpaper: this.settings.wallpaper || 'gradient-blue',
+                animations: this.settings.animations !== false,
+                sounds: this.settings.sounds !== false,
+                accentColor: this.settings.accentColor || '#2563eb'
+            };
+        }
+    }
+
     async init() {
-        console.log(`Initializing ${this.name} v${this.version}...`);
+        console.log(`Initializing ${this.name} v${this.version} for user: ${this.currentUser.firstName} ${this.currentUser.lastName}`);
         
         try {
             // Apply theme
@@ -35,6 +83,9 @@ class ModernOS {
             
             // Apply wallpaper
             this.applyWallpaper(this.state.wallpaper);
+            
+            // Apply accent color
+            this.applyAccentColor(this.state.accentColor);
             
             // Initialize clock
             this.initClock();
@@ -44,6 +95,9 @@ class ModernOS {
             
             // Setup system events
             this.setupSystemEvents();
+            
+            // Update user info in UI
+            this.updateUserInfo();
             
             this.isInitialized = true;
             this.emit('system:ready');
@@ -80,7 +134,34 @@ class ModernOS {
         this.settings[key] = value;
         this.state[key] = value;
         this.saveSettings();
+        
+        // Also update user preferences if user is logged in
+        if (this.currentUser) {
+            this.updateUserPreference(key, value);
+        }
+        
         this.emit('settings:updated', { key, value });
+    }
+    
+    updateUserPreference(key, value) {
+        if (!this.currentUser) return;
+        
+        // Update user preferences in localStorage
+        try {
+            const users = JSON.parse(localStorage.getItem('modernos-users') || '{}');
+            if (users[this.currentUser.userId]) {
+                users[this.currentUser.userId].preferences[key] = value;
+                localStorage.setItem('modernos-users', JSON.stringify(users));
+                
+                // Update current session
+                this.currentUser.preferences[key] = value;
+                const sessionKey = localStorage.getItem('modernos-session') ? 'modernos-session' : 'modernos-session-temp';
+                const storage = localStorage.getItem('modernos-session') ? localStorage : sessionStorage;
+                storage.setItem(sessionKey, JSON.stringify(this.currentUser));
+            }
+        } catch (error) {
+            console.error('Failed to update user preferences:', error);
+        }
     }
     
     // Theme management
@@ -94,25 +175,149 @@ class ModernOS {
     applyWallpaper(wallpaper) {
         const desktop = document.querySelector('.desktop-background');
         if (desktop) {
-            switch (wallpaper) {
-                case 'gradient-blue':
-                    desktop.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    break;
-                case 'gradient-purple':
-                    desktop.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
-                    break;
-                case 'gradient-orange':
-                    desktop.style.background = 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)';
-                    break;
-                case 'gradient-green':
-                    desktop.style.background = 'linear-gradient(135deg, #a8e6cf 0%, #dcedc8 100%)';
-                    break;
-                default:
-                    desktop.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            // Check if it's a custom wallpaper (starts with 'custom-')
+            if (wallpaper.startsWith('custom-')) {
+                const customWallpaper = this.getCustomWallpaper(wallpaper);
+                if (customWallpaper) {
+                    desktop.style.background = `url(${customWallpaper}) center/cover`;
+                }
+            } else {
+                // Predefined gradients
+                switch (wallpaper) {
+                    case 'gradient-blue':
+                        desktop.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        break;
+                    case 'gradient-purple':
+                        desktop.style.background = 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+                        break;
+                    case 'gradient-orange':
+                        desktop.style.background = 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)';
+                        break;
+                    case 'gradient-green':
+                        desktop.style.background = 'linear-gradient(135deg, #a8e6cf 0%, #dcedc8 100%)';
+                        break;
+                    case 'gradient-pink':
+                        desktop.style.background = 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)';
+                        break;
+                    case 'gradient-sunset':
+                        desktop.style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                        break;
+                    case 'gradient-ocean':
+                        desktop.style.background = 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)';
+                        break;
+                    case 'gradient-forest':
+                        desktop.style.background = 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)';
+                        break;
+                    default:
+                        desktop.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }
             }
         }
         this.state.wallpaper = wallpaper;
         this.emit('wallpaper:changed', { wallpaper });
+    }
+    
+    // Accent color management
+    applyAccentColor(color) {
+        document.documentElement.style.setProperty('--primary-color', color);
+        // Generate hover color (slightly darker)
+        const hoverColor = this.adjustBrightness(color, -20);
+        document.documentElement.style.setProperty('--primary-hover', hoverColor);
+        this.state.accentColor = color;
+        this.emit('accent-color:changed', { color });
+    }
+    
+    adjustBrightness(hex, percent) {
+        // Remove # if present
+        hex = hex.replace('#', '');
+        
+        // Parse RGB
+        const num = parseInt(hex, 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        
+        return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+    
+    // Custom wallpaper management
+    uploadWallpaper(file) {
+        return new Promise((resolve, reject) => {
+            if (!file || !file.type.startsWith('image/')) {
+                reject(new Error('Please select a valid image file'));
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                reject(new Error('File size must be less than 5MB'));
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const wallpaperId = 'custom-' + Date.now();
+                this.saveCustomWallpaper(wallpaperId, e.target.result);
+                resolve(wallpaperId);
+            };
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    saveCustomWallpaper(id, dataUrl) {
+        try {
+            const customWallpapers = JSON.parse(localStorage.getItem('modernos-wallpapers') || '{}');
+            customWallpapers[id] = {
+                id: id,
+                dataUrl: dataUrl,
+                createdAt: new Date().toISOString(),
+                userId: this.currentUser ? this.currentUser.userId : 'guest'
+            };
+            localStorage.setItem('modernos-wallpapers', JSON.stringify(customWallpapers));
+        } catch (error) {
+            console.error('Failed to save custom wallpaper:', error);
+        }
+    }
+    
+    getCustomWallpaper(id) {
+        try {
+            const customWallpapers = JSON.parse(localStorage.getItem('modernos-wallpapers') || '{}');
+            return customWallpapers[id] ? customWallpapers[id].dataUrl : null;
+        } catch (error) {
+            console.error('Failed to get custom wallpaper:', error);
+            return null;
+        }
+    }
+    
+    getCustomWallpapers() {
+        try {
+            const customWallpapers = JSON.parse(localStorage.getItem('modernos-wallpapers') || '{}');
+            // Filter by current user
+            const userWallpapers = {};
+            Object.entries(customWallpapers).forEach(([id, wallpaper]) => {
+                if (!this.currentUser || wallpaper.userId === this.currentUser.userId) {
+                    userWallpapers[id] = wallpaper;
+                }
+            });
+            return userWallpapers;
+        } catch (error) {
+            console.error('Failed to get custom wallpapers:', error);
+            return {};
+        }
+    }
+    
+    deleteCustomWallpaper(id) {
+        try {
+            const customWallpapers = JSON.parse(localStorage.getItem('modernos-wallpapers') || '{}');
+            delete customWallpapers[id];
+            localStorage.setItem('modernos-wallpapers', JSON.stringify(customWallpapers));
+            this.emit('wallpaper:deleted', { id });
+        } catch (error) {
+            console.error('Failed to delete custom wallpaper:', error);
+        }
     }
     
     // Clock initialization
@@ -320,9 +525,50 @@ class ModernOS {
         };
     }
     
+    // User info management
+    updateUserInfo() {
+        if (!this.currentUser) return;
+        
+        // Update user info in start menu or taskbar if elements exist
+        const userElements = document.querySelectorAll('.user-name, .user-info');
+        userElements.forEach(element => {
+            element.textContent = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+        });
+        
+        // Update user avatar if element exists
+        const avatarElements = document.querySelectorAll('.user-avatar');
+        avatarElements.forEach(element => {
+            if (this.currentUser.avatar) {
+                element.src = this.currentUser.avatar;
+            } else {
+                // Use initials as fallback
+                element.textContent = `${this.currentUser.firstName[0]}${this.currentUser.lastName[0]}`;
+            }
+        });
+    }
+    
+    // Logout functionality
+    logout() {
+        // Clear sessions
+        localStorage.removeItem('modernos-session');
+        sessionStorage.removeItem('modernos-session-temp');
+        
+        // Emit logout event
+        this.emit('user:logout');
+        
+        // Show notification
+        this.showNotification('Logout', 'You have been logged out successfully');
+        
+        // Redirect to auth page
+        setTimeout(() => {
+            window.location.href = 'auth.html';
+        }, 1000);
+    }
+    
     // Power management
     restart() {
         this.emit('system:restart');
+        this.showNotification('System', 'Restarting ModernOS...');
         setTimeout(() => {
             window.location.reload();
         }, 1000);
@@ -330,8 +576,9 @@ class ModernOS {
     
     shutdown() {
         this.emit('system:shutdown');
+        this.showNotification('System', 'Shutting down ModernOS...');
         setTimeout(() => {
-            window.close();
+            this.logout();
         }, 1000);
     }
     
